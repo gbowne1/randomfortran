@@ -1,15 +1,16 @@
-C     Create node function
       INTEGER FUNCTION CREATE_NODE(leaf)
-      INTEGER, PARAMETER :: M = 2
       INTEGER, PARAMETER :: MAX_NODES = 100
-      INTEGER keys(M, MAX_NODES)
-      INTEGER children(M+1, MAX_NODES)
-      INTEGER count(MAX_NODES)
-      INTEGER is_leaf(MAX_NODES)
-      COMMON /AB_NODE/ keys, children, count, is_leaf
       INTEGER leaf
-      INTEGER i, new_node
+      INTEGER new_node
 
-      ! ... (rest of the CREATE_NODE function)
-
+      DO 10 new_node = 1, MAX_NODES
+         IF (is_leaf(new_node) .EQ. 0) THEN
+            is_leaf(new_node) = leaf
+            count(new_node) = 0
+            CREATE_NODE = new_node
+            RETURN
+         END IF
+10    CONTINUE
+      CREATE_NODE = -1  ! Return -1 if no free node is available
+      RETURN
       END FUNCTION CREATE_NODE

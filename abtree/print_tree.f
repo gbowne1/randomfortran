@@ -1,15 +1,41 @@
-C     Print tree function (non-recursive version)
       SUBROUTINE PRINT_TREE(root)
-      INTEGER, PARAMETER :: M = 2
-      INTEGER, PARAMETER :: MAX_NODES = 100
-      INTEGER keys(M, MAX_NODES)
-      INTEGER children(M+1, MAX_NODES)
-      INTEGER count(MAX_NODES)
-      INTEGER is_leaf(MAX_NODES)
-      COMMON /AB_NODE/ keys, children, count, is_leaf
       INTEGER root
-      INTEGER stack(MAX_NODES), top, current, i
+      INTEGER stack(100), top, current, i
 
-      ! ... (rest of the PRINT_TREE subroutine)
+      top = 0
+      current = root
 
+      ! Non-recursive tree traversal
+      DO WHILE (current .NE. -1)
+         ! Push current node onto the stack
+         stack(top) = current
+         top = top + 1
+         current = children(current, 1)  ! Go to the leftmost child
+      END DO
+
+      ! Print the nodes in a depth-first manner
+      DO WHILE (top .GT. 0)
+         top = top - 1
+         current = stack(top)
+
+         ! Print the current node
+         CALL PRINT_CHILD(current)
+
+         ! Now go to the next child
+         i = 1
+         WHILE (i <= count(current) + 1)
+            current = children(current, i)
+            IF (current .NE. -1) THEN
+               stack(top) = current
+               top = top + 1
+               DO WHILE (current .NE. -1)
+                  stack(top) = current
+                  top = top + 1
+                  current = children(current, 1)
+               END DO
+            END IF
+            i = i + 1
+         END WHILE
+      END DO
+      RETURN
       END SUBROUTINE PRINT_TREE
